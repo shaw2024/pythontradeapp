@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.contrib import messages
 from pathlib import Path
 from decimal import Decimal
+import json
 
 from .models import Account, Position, Trade
 from .utils import load_series
@@ -36,8 +37,8 @@ def index(request):
 
     context = {
         "symbol": symbol,
-        "dates": dates,
-        "closes": closes,
+        "dates": json.dumps(dates),
+        "closes": json.dumps(closes),
         "latest_price": latest_price,
         "account": account,
         "positions": positions,
@@ -61,7 +62,7 @@ def trade_action(request):
     if action == "buy":
         cost = price * qty
         if account.cash < cost:
-            messages.error(request, "Insufficient cash for this purchase.")
+            messages.error(request, f"Insufficient cash for this purchase. Need ${cost}, have ${account.cash}.")
             return redirect(f"?symbol={symbol}")
         # update or create position
         pos, _ = Position.objects.get_or_create(account=account, symbol=symbol, defaults={"quantity": 0, "avg_price": 0})
@@ -76,16 +77,16 @@ def trade_action(request):
         account.cash = Decimal(account.cash) - cost
         account.save()
         Trade.objects.create(account=account, symbol=symbol, side="BUY", quantity=qty, price=price)
-        messages.success(request, f"Bought {qty} {symbol} @ {price}")
+        messages.success(request, f"✅ Purchase Complete: Bought {qty} shares of {symbol} at ${price} each (Total: ${cost}). Remaining cash: ${account.cash}.")
 
     elif action == "sell":
         try:
             pos = Position.objects.get(account=account, symbol=symbol)
         except Position.DoesNotExist:
-            messages.error(request, "No shares to sell.")
+            messages.error(request, f"No {symbol} shares to sell.")
             return redirect(f"?symbol={symbol}")
         if qty > pos.quantity:
-            messages.error(request, "Not enough shares to sell.")
+            messages.error(request, f"Not enough shares to sell. You have {pos.quantity} shares, trying to sell {qty}.")
             return redirect(f"?symbol={symbol}")
         proceeds = price * qty
         pos.quantity = pos.quantity - qty
@@ -95,7 +96,7 @@ def trade_action(request):
         account.cash = Decimal(account.cash) + proceeds
         account.save()
         Trade.objects.create(account=account, symbol=symbol, side="SELL", quantity=qty, price=price)
-        messages.success(request, f"Sold {qty} {symbol} @ {price}")
+        messages.success(request, f"✅ Sale Complete: Sold {qty} shares of {symbol} at ${price} each (Total proceeds: ${proceeds}). New cash balance: ${account.cash}.")
 
     return redirect(f"{reverse('trader:index')}?symbol={symbol}")
 

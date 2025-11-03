@@ -95,8 +95,8 @@
     </div>
 
     <script>
-      const dates = {{ dates|safe }};
-      const closes = {{ closes|safe }};
+      const dates = JSON.parse('{{ dates|escapejs }}');
+      const closes = JSON.parse('{{ closes|escapejs }}');
       const ctx = document.getElementById('chart').getContext('2d');
       new Chart(ctx, {
         type: 'line',
