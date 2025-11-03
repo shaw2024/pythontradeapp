@@ -1,351 +1,219 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>PythonTradeApp - GitHub Pages</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PythonTradeApp</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-      * { margin: 0; padding: 0; box-sizing: border-box; }
-      body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f5f5f5; }
-      .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
-      header { background: #333; color: white; padding: 1rem; margin-bottom: 2rem; border-radius: 8px; }
-      h1 { margin: 0; }
-      .messages { margin-bottom: 1rem; }
-      .message { padding: 10px; margin: 5px 0; border-radius: 4px; }
-      .message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-      .message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-      .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-      @media (max-width: 768px) { .columns { grid-template-columns: 1fr; } }
-      .left, .right { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-      form { margin-bottom: 1rem; }
-      label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
-      select, input { padding: 8px; border: 1px solid #ccc; border-radius: 4px; margin-bottom: 1rem; width: 100%; }
-      button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px; }
-      button:hover { background: #0056b3; }
-      button.reset { background: #dc3545; }
-      button.reset:hover { background: #c82333; }
-      .quote h2 { color: #333; margin: 1rem 0; }
-      #chart { max-width: 100%; height: 300px; margin: 1rem 0; }
-      section { margin-bottom: 2rem; }
-      section h3 { margin-bottom: 1rem; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 0.5rem; }
-      table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
-      th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
-      th { background: #f8f9fa; font-weight: bold; }
-      .actions { display: flex; gap: 10px; }
-      .account p { margin: 0.5rem 0; font-size: 1.1rem; }
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        header { background: #333; color: white; padding: 20px; text-align: center; margin-bottom: 20px; }
+        .columns { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { background: white; padding: 20px; border-radius: 8px; }
+        h3 { color: #333; border-bottom: 2px solid #007bff; padding-bottom: 5px; }
+        button { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 4px; margin: 5px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .sell { background: #dc3545; }
+        .reset { background: #6c757d; }
+        input, select { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 8px; border-bottom: 1px solid #ddd; text-align: left; }
+        th { background: #f8f9fa; }
+        .price { background: #e3f2fd; padding: 15px; text-align: center; margin: 10px 0; font-size: 1.2em; }
+        .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="container">
-      <header>
-        <h1>PythonTradeApp</h1>
-        <p>Client-side trading simulator powered by GitHub Pages</p>
-      </header>
-      
-      <div id="messages" class="messages"></div>
-      
-      <div class="columns">
-        <div class="left">
-          <form id="symbolForm">
-            <label for="symbol">Symbol</label>
-            <select id="symbol" name="symbol">
-              <option value="AAPL">AAPL</option>
-              <option value="MSFT">MSFT</option>
-            </select>
-          </form>
+        <header>
+            <h1>�� PythonTradeApp</h1>
+            <p>Interactive Trading Simulator</p>
+        </header>
 
-          <div class="quote">
-            <h2 id="currentPrice">AAPL Price: Loading...</h2>
-          </div>
+        <div id="messages"></div>
 
-          <canvas id="chart" height="300"></canvas>
+        <div class="columns">
+            <div class="panel">
+                <h3>Stock Selection</h3>
+                <select id="symbol">
+                    <option value="AAPL">AAPL - Apple</option>
+                    <option value="MSFT">MSFT - Microsoft</option>
+                </select>
+
+                <div class="price" id="price">AAPL: $225.77</div>
+
+                <h3>Chart</h3>
+                <canvas id="chart" style="height: 300px;"></canvas>
+            </div>
+
+            <div class="panel">
+                <h3>Account</h3>
+                <p>Cash: $<span id="cash">100,000</span></p>
+                <p>Portfolio: $<span id="portfolio">0</span></p>
+
+                <h3>Positions</h3>
+                <table>
+                    <thead><tr><th>Symbol</th><th>Shares</th><th>Avg</th><th>Value</th></tr></thead>
+                    <tbody id="positions"><tr><td colspan="4">No positions</td></tr></tbody>
+                </table>
+
+                <h3>Trade</h3>
+                <input type="number" id="qty" value="10" min="1">
+                <button onclick="trade('buy')">Buy</button>
+                <button class="sell" onclick="trade('sell')">Sell</button>
+
+                <h3>Recent Trades</h3>
+                <table>
+                    <thead><tr><th>Time</th><th>Side</th><th>Symbol</th><th>Qty</th><th>Price</th></tr></thead>
+                    <tbody id="trades"><tr><td colspan="5">No trades</td></tr></tbody>
+                </table>
+
+                <button class="reset" onclick="reset()">Reset Account</button>
+            </div>
         </div>
-
-        <div class="right">
-          <section class="account">
-            <h3>Account</h3>
-            <p>Cash: $<span id="cash">100000.00</span></p>
-            <p>Positions value: $<span id="positionsValue">0.00</span></p>
-          </section>
-
-          <section class="positions">
-            <h3>Positions</h3>
-            <table>
-              <thead><tr><th>Symbol</th><th>Qty</th><th>Avg Price</th><th>Current Value</th></tr></thead>
-              <tbody id="positionsTable">
-                <tr><td colspan="4">No positions</td></tr>
-              </tbody>
-            </table>
-          </section>
-
-          <section class="trade">
-            <h3>Trade</h3>
-            <form id="tradeForm">
-              <label>Quantity</label>
-              <input type="number" id="quantity" min="1" value="1">
-              <div class="actions">
-                <button type="button" onclick="executeTrade('buy')">Buy</button>
-                <button type="button" onclick="executeTrade('sell')">Sell</button>
-              </div>
-            </form>
-          </section>
-
-          <section class="history">
-            <h3>Recent Trades</h3>
-            <table>
-              <thead><tr><th>Time</th><th>Side</th><th>Symbol</th><th>Qty</th><th>Price</th></tr></thead>
-              <tbody id="tradesTable">
-                <tr><td colspan="5">No trades</td></tr>
-              </tbody>
-            </table>
-          </section>
-
-          <button type="button" class="reset" onclick="resetAccount()">Reset Account</button>
-        </div>
-      </div>
     </div>
 
     <script>
-      // Sample data for AAPL and MSFT
-      const stockData = {
-        AAPL: {
-          dates: ['2024-10-01', '2024-10-02', '2024-10-03', '2024-10-04', '2024-10-05', '2024-10-08', '2024-10-09', '2024-10-10'],
-          prices: [225.77, 226.47, 225.67, 226.80, 224.63, 225.77, 221.69, 220.70]
-        },
-        MSFT: {
-          dates: ['2024-10-01', '2024-10-02', '2024-10-03', '2024-10-04', '2024-10-05', '2024-10-08', '2024-10-09', '2024-10-10'],
-          prices: [416.06, 415.26, 414.78, 418.22, 413.49, 413.65, 411.20, 408.09]
-        }
-      };
-
-      let currentSymbol = 'AAPL';
-      let chart = null;
-      
-      // Initialize data from localStorage or defaults
-      function getAccountData() {
-        const defaultData = {
-          cash: 100000.00,
-          positions: {},
-          trades: []
-        };
-        return JSON.parse(localStorage.getItem('tradingAccount') || JSON.stringify(defaultData));
-      }
-      
-      function saveAccountData(data) {
-        localStorage.setItem('tradingAccount', JSON.stringify(data));
-      }
-      
-      function getCurrentPrice(symbol) {
-        const data = stockData[symbol];
-        return data ? data.prices[data.prices.length - 1] : 0;
-      }
-      
-      function showMessage(text, type = 'success') {
-        const messagesDiv = document.getElementById('messages');
-        messagesDiv.innerHTML = `<div class="message ${type}">${text}</div>`;
-        setTimeout(() => messagesDiv.innerHTML = '', 5000);
-      }
-      
-      function updateDisplay() {
-        const account = getAccountData();
-        const currentPrice = getCurrentPrice(currentSymbol);
-        
-        // Update price display
-        document.getElementById('currentPrice').textContent = `${currentSymbol} Price: $${currentPrice}`;
-        
-        // Update cash
-        document.getElementById('cash').textContent = account.cash.toFixed(2);
-        
-        // Update positions
-        const positionsTable = document.getElementById('positionsTable');
-        let totalValue = 0;
-        
-        if (Object.keys(account.positions).length === 0) {
-          positionsTable.innerHTML = '<tr><td colspan="4">No positions</td></tr>';
-        } else {
-          let html = '';
-          for (const [symbol, position] of Object.entries(account.positions)) {
-            if (position.quantity > 0) {
-              const currentValue = position.quantity * getCurrentPrice(symbol);
-              totalValue += currentValue;
-              html += `<tr>
-                <td>${symbol}</td>
-                <td>${position.quantity}</td>
-                <td>$${position.avgPrice.toFixed(2)}</td>
-                <td>$${currentValue.toFixed(2)}</td>
-              </tr>`;
-            }
-          }
-          positionsTable.innerHTML = html || '<tr><td colspan="4">No positions</td></tr>';
-        }
-        
-        document.getElementById('positionsValue').textContent = totalValue.toFixed(2);
-        
-        // Update trades
-        const tradesTable = document.getElementById('tradesTable');
-        if (account.trades.length === 0) {
-          tradesTable.innerHTML = '<tr><td colspan="5">No trades</td></tr>';
-        } else {
-          let html = '';
-          const recentTrades = account.trades.slice(-10).reverse();
-          for (const trade of recentTrades) {
-            html += `<tr>
-              <td>${new Date(trade.timestamp).toLocaleString()}</td>
-              <td>${trade.side}</td>
-              <td>${trade.symbol}</td>
-              <td>${trade.quantity}</td>
-              <td>$${trade.price.toFixed(2)}</td>
-            </tr>`;
-          }
-          tradesTable.innerHTML = html;
-        }
-      }
-      
-      function executeTrade(action) {
-        const account = getAccountData();
-        const quantity = parseInt(document.getElementById('quantity').value) || 0;
-        const price = getCurrentPrice(currentSymbol);
-        
-        if (quantity <= 0) {
-          showMessage('Please enter a valid quantity', 'error');
-          return;
-        }
-        
-        if (action === 'buy') {
-          const cost = price * quantity;
-          if (account.cash < cost) {
-            showMessage(`Insufficient cash for this purchase. Need $${cost.toFixed(2)}, have $${account.cash.toFixed(2)}`, 'error');
-            return;
-          }
-          
-          // Update position
-          if (!account.positions[currentSymbol]) {
-            account.positions[currentSymbol] = { quantity: 0, avgPrice: 0 };
-          }
-          
-          const position = account.positions[currentSymbol];
-          const newTotalQty = position.quantity + quantity;
-          const newAvgPrice = newTotalQty > 0 ? 
-            ((position.avgPrice * position.quantity) + (price * quantity)) / newTotalQty : 0;
-          
-          position.quantity = newTotalQty;
-          position.avgPrice = newAvgPrice;
-          account.cash -= cost;
-          
-          // Record trade
-          account.trades.push({
-            timestamp: new Date().toISOString(),
-            side: 'BUY',
-            symbol: currentSymbol,
-            quantity: quantity,
-            price: price
-          });
-          
-          showMessage(`✅ Purchase Complete: Bought ${quantity} shares of ${currentSymbol} at $${price.toFixed(2)} each (Total: $${cost.toFixed(2)}). Remaining cash: $${account.cash.toFixed(2)}`);
-          
-        } else if (action === 'sell') {
-          const position = account.positions[currentSymbol];
-          if (!position || position.quantity === 0) {
-            showMessage(`No ${currentSymbol} shares to sell`, 'error');
-            return;
-          }
-          
-          if (quantity > position.quantity) {
-            showMessage(`Not enough shares to sell. You have ${position.quantity} shares, trying to sell ${quantity}`, 'error');
-            return;
-          }
-          
-          const proceeds = price * quantity;
-          position.quantity -= quantity;
-          if (position.quantity === 0) {
-            position.avgPrice = 0;
-          }
-          account.cash += proceeds;
-          
-          // Record trade
-          account.trades.push({
-            timestamp: new Date().toISOString(),
-            side: 'SELL',
-            symbol: currentSymbol,
-            quantity: quantity,
-            price: price
-          });
-          
-          showMessage(`✅ Sale Complete: Sold ${quantity} shares of ${currentSymbol} at $${price.toFixed(2)} each (Total proceeds: $${proceeds.toFixed(2)}). New cash balance: $${account.cash.toFixed(2)}`);
-        }
-        
-        saveAccountData(account);
-        updateDisplay();
-      }
-      
-      function resetAccount() {
-        if (confirm('Reset account to initial state? This will clear all positions and trades.')) {
-          localStorage.removeItem('tradingAccount');
-          updateDisplay();
-          showMessage('Reset complete. Account restored to $100,000 cash.');
-        }
-      }
-      
-      function updateChart() {
-        const data = stockData[currentSymbol];
-        const ctx = document.getElementById('chart').getContext('2d');
-        
-        if (chart) {
-          chart.destroy();
-        }
-        
-        chart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: data.dates,
-            datasets: [{
-              label: currentSymbol,
-              data: data.prices,
-              borderColor: 'rgb(75, 192, 192)',
-              backgroundColor: 'rgba(75, 192, 192, 0.1)',
-              tension: 0.1,
-              fill: true
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-              y: {
-                beginAtZero: false,
-                grid: {
-                  color: 'rgba(0,0,0,0.1)'
-                }
-              },
-              x: {
-                grid: {
-                  color: 'rgba(0,0,0,0.1)'
-                }
-              }
+        const data = {
+            AAPL: { 
+                dates: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5'], 
+                prices: [225.77, 226.47, 225.67, 226.80, 224.63] 
             },
-            plugins: {
-              legend: {
-                display: true,
-                position: 'top'
-              }
+            MSFT: { 
+                dates: ['Oct 1', 'Oct 2', 'Oct 3', 'Oct 4', 'Oct 5'], 
+                prices: [416.06, 415.26, 414.78, 418.22, 413.49] 
             }
-          }
-        });
-      }
-      
-      // Event listeners
-      document.getElementById('symbol').addEventListener('change', function(e) {
-        currentSymbol = e.target.value;
-        updateChart();
-        updateDisplay();
-      });
-      
-      // Initialize app
-      document.addEventListener('DOMContentLoaded', function() {
-        updateChart();
-        updateDisplay();
-      });
+        };
+        let symbol = 'AAPL', chart = null;
+
+        function getAccount() {
+            return JSON.parse(localStorage.getItem('account') || '{"cash":100000,"positions":{},"trades":[]}');
+        }
+        function saveAccount(acc) { 
+            localStorage.setItem('account', JSON.stringify(acc)); 
+        }
+        function getPrice(s) { 
+            return data[s].prices[data[s].prices.length-1]; 
+        }
+        function msg(text, type='success') {
+            document.getElementById('messages').innerHTML = '<div class="message ' + type + '">' + text + '</div>';
+            setTimeout(function() { document.getElementById('messages').innerHTML = ''; }, 4000);
+        }
+
+        function update() {
+            const acc = getAccount();
+            const price = getPrice(symbol);
+            document.getElementById('price').textContent = symbol + ': $' + price;
+            document.getElementById('cash').textContent = acc.cash.toFixed(0);
+
+            let portValue = 0;
+            const posTable = document.getElementById('positions');
+            if (Object.keys(acc.positions).length === 0) {
+                posTable.innerHTML = '<tr><td colspan="4">No positions</td></tr>';
+            } else {
+                let html = '';
+                for (const sym in acc.positions) {
+                    const pos = acc.positions[sym];
+                    if (pos.qty > 0) {
+                        const val = pos.qty * getPrice(sym);
+                        portValue += val;
+                        html += '<tr><td>' + sym + '</td><td>' + pos.qty + '</td><td>$' + pos.avg.toFixed(2) + '</td><td>$' + val.toFixed(0) + '</td></tr>';
+                    }
+                }
+                posTable.innerHTML = html;
+            }
+            document.getElementById('portfolio').textContent = portValue.toFixed(0);
+
+            const tradeTable = document.getElementById('trades');
+            if (acc.trades.length === 0) {
+                tradeTable.innerHTML = '<tr><td colspan="5">No trades</td></tr>';
+            } else {
+                let html = '';
+                const recent = acc.trades.slice(-3).reverse();
+                for (let i = 0; i < recent.length; i++) {
+                    const t = recent[i];
+                    html += '<tr><td>' + new Date(t.time).toLocaleTimeString() + '</td><td>' + t.side + '</td><td>' + t.symbol + '</td><td>' + t.qty + '</td><td>$' + t.price + '</td></tr>';
+                }
+                tradeTable.innerHTML = html;
+            }
+        }
+
+        function trade(action) {
+            const acc = getAccount();
+            const qty = parseInt(document.getElementById('qty').value) || 0;
+            const price = getPrice(symbol);
+            if (qty <= 0) return msg('Invalid quantity', 'error');
+
+            if (action === 'buy') {
+                const cost = price * qty;
+                if (acc.cash < cost) return msg('Need $' + cost + ', have $' + acc.cash.toFixed(0), 'error');
+
+                if (!acc.positions[symbol]) acc.positions[symbol] = {qty: 0, avg: 0};
+                const pos = acc.positions[symbol];
+                const newQty = pos.qty + qty;
+                pos.avg = newQty > 0 ? ((pos.avg * pos.qty) + (price * qty)) / newQty : 0;
+                pos.qty = newQty;
+                acc.cash -= cost;
+                acc.trades.push({time: new Date().toISOString(), side: 'BUY', symbol: symbol, qty: qty, price: price});
+                msg('Bought ' + qty + ' ' + symbol + ' at $' + price);
+            } else {
+                const pos = acc.positions[symbol];
+                if (!pos || pos.qty === 0) return msg('No ' + symbol + ' to sell', 'error');
+                if (qty > pos.qty) return msg('Only have ' + pos.qty, 'error');
+
+                pos.qty -= qty;
+                acc.cash += price * qty;
+                acc.trades.push({time: new Date().toISOString(), side: 'SELL', symbol: symbol, qty: qty, price: price});
+                msg('Sold ' + qty + ' ' + symbol + ' at $' + price);
+            }
+            saveAccount(acc);
+            update();
+        }
+
+        function createChart() {
+            const d = data[symbol];
+            const ctx = document.getElementById('chart').getContext('2d');
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: d.dates,
+                    datasets: [{ 
+                        label: symbol, 
+                        data: d.prices, 
+                        borderColor: '#007bff', 
+                        fill: false 
+                    }]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false 
+                }
+            });
+        }
+
+        function reset() {
+            if (confirm('Reset account to $100,000?')) {
+                localStorage.removeItem('account');
+                update();
+                msg('Reset complete!');
+            }
+        }
+
+        document.getElementById('symbol').onchange = function(e) {
+            symbol = e.target.value;
+            createChart();
+            update();
+        };
+
+        window.onload = function() {
+            createChart();
+            update();
+            msg('Welcome! You have $100,000 to trade.');
+        };
     </script>
-  </body>
+</body>
 </html>
