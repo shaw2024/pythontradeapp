@@ -42,7 +42,16 @@ CSRF_TRUSTED_ORIGINS = [
     "http://localhost:8001", 
     "https://127.0.0.1:8001",
     "http://127.0.0.1:8001",
+    "https://*.githubpreview.dev",
+    "https://*.github.dev",
+    "https://*.app.github.dev",
+    "https://*.preview.app.github.dev",
 ]
+
+# Disable CSRF for development if needed
+if DEBUG:
+    CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = 'Lax'
 
 # Application definition
 
