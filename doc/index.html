@@ -1,1 +1,116 @@
+{% load static %}
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>PythonTradeApp</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>PythonTradeApp</h1>
+      </header>
+      {% if messages %}
+      <div class="messages">
+        {% for m in messages %}
+          <div class="message {{ m.tags }}">{{ m }}</div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class="columns">
+        <div class="left">
+          <form method="get" action=".">
+            <label for="symbol">Symbol</label>
+            <select id="symbol" name="symbol" onchange="this.form.submit()">
+              <option value="AAPL" {% if symbol == 'AAPL' %}selected{% endif %}>AAPL</option>
+              <option value="MSFT" {% if symbol == 'MSFT' %}selected{% endif %}>MSFT</option>
+            </select>
+          </form>
+
+          <div class="quote">
+            <h2>{{ symbol }} Price: {{ latest_price }}</h2>
+          </div>
+
+          <canvas id="chart" height="200"></canvas>
+        </div>
+
+        <div class="right">
+          <section class="account">
+            <h3>Account</h3>
+            <p>Cash: ${{ account.cash }}</p>
+            <p>Positions value: ${{ positions_value }}</p>
+          </section>
+
+          <section class="positions">
+            <h3>Positions</h3>
+            <table>
+              <thead><tr><th>Symbol</th><th>Qty</th><th>Avg</th></tr></thead>
+              <tbody>
+                {% for p in positions %}
+                <tr><td>{{ p.symbol }}</td><td>{{ p.quantity }}</td><td>{{ p.avg_price }}</td></tr>
+                {% empty %}
+                <tr><td colspan="3">No positions</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </section>
+
+          <section class="trade">
+            <h3>Trade</h3>
+            <form method="post" action="{% url 'trader:trade' %}">
+              {% csrf_token %}
+              <input type="hidden" name="symbol" value="{{ symbol }}">
+              <label>Quantity</label>
+              <input type="number" name="quantity" min="1" value="1">
+              <div class="actions">
+                <button name="action" value="buy">Buy</button>
+                <button name="action" value="sell">Sell</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="history">
+            <h3>Recent Trades</h3>
+            <table>
+              <thead><tr><th>Time</th><th>Side</th><th>Qty</th><th>Price</th></tr></thead>
+              <tbody>
+                {% for t in trades %}
+                <tr><td>{{ t.timestamp }}</td><td>{{ t.side }}</td><td>{{ t.quantity }}</td><td>{{ t.price }}</td></tr>
+                {% empty %}
+                <tr><td colspan="4">No trades</td></tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </section>
+
+          <form method="post" action="{% url 'trader:reset' %}" onsubmit="return confirm('Reset account to initial state?');">
+            {% csrf_token %}
+            <button type="submit" class="reset">Reset</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const dates = JSON.parse('{{ dates|escapejs }}');
+      const closes = JSON.parse('{{ closes|escapejs }}');
+      const ctx = document.getElementById('chart').getContext('2d');
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: dates,
+          datasets: [{
+            label: '{{ symbol }}',
+            data: closes,
+            borderColor: 'rgb(75, 192, 192)',
+            tension: 0.1
+          }]
+        }
+      });
+    </script>
+  </body>
+</html>
 
