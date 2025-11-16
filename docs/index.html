@@ -24,6 +24,17 @@
         .message { padding: 10px; margin: 10px 0; border-radius: 4px; }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
+        footer { 
+            background: #333; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            margin-top: 40px; 
+            border-radius: 8px; 
+        }
+        footer p { margin: 5px 0; }
+        footer a { color: #007bff; text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -74,6 +85,16 @@
                 <button class="reset" onclick="reset()">Reset Account</button>
             </div>
         </div>
+
+        <footer>
+            <p><strong>PythonTradeApp</strong> - Interactive Trading Simulator</p>
+            <p>Built with Chart.js | Data stored locally in your browser</p>
+            <p>
+                <a href="https://github.com/shaw2024/pythontradeapp" target="_blank">GitHub Repository</a> | 
+                <a href="https://github.com/shaw2024" target="_blank">Developer</a>
+            </p>
+            <p><small>&copy; 2025 PythonTradeApp. Educational purposes only - not real trading.</small></p>
+        </footer>
     </div>
 
     <script>
