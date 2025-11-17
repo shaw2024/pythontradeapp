@@ -40,6 +40,17 @@
         th, td { padding: 8px 4px; border-bottom: 1px solid #ddd; text-align: left; font-size: 14px; }
         th { background: #f8f9fa; font-weight: bold; }
         .price { background: #e3f2fd; padding: 15px; text-align: center; margin: 10px 0; font-size: 1.2em; border-radius: 6px; font-weight: bold; }
+        .chart-container { 
+            position: relative; 
+            height: 250px; 
+            width: 100%; 
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .chart-container canvas { 
+            max-width: 100% !important; 
+            max-height: 100% !important; 
+        }
         
         /* Mobile table improvements */
         @media (max-width: 768px) {
@@ -121,8 +132,8 @@
                 font-size: 12px;
             }
             footer small { font-size: 12px; }
-            #chart { height: 250px !important; }
-            canvas { touch-action: pan-x pan-y; }
+            .chart-container { height: 200px !important; }
+            .chart-container canvas { width: 100% !important; height: 100% !important; }
         }
     </style>
 </head>
@@ -146,7 +157,9 @@
                 <div class="price" id="price">AAPL: $225.77</div>
 
                 <h3>Chart</h3>
-                <canvas id="chart" style="height: 300px;"></canvas>
+                <div class="chart-container">
+                    <canvas id="chart" width="400" height="250"></canvas>
+                </div>
             </div>
 
             <div class="panel">
@@ -297,32 +310,41 @@
                         borderColor: '#007bff',
                         backgroundColor: 'rgba(0, 123, 255, 0.1)',
                         borderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
                         fill: true 
                     }]
                 },
                 options: { 
-                    responsive: true, 
-                    maintainAspectRatio: false,
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
+                    responsive: false,
+                    maintainAspectRatio: true,
+                    layout: {
+                        padding: 10
                     },
                     scales: {
                         y: {
                             beginAtZero: false,
                             ticks: {
+                                maxTicksLimit: 6,
                                 callback: function(value) {
                                     return '$' + value.toFixed(2);
                                 }
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                maxTicksLimit: 5
                             }
                         }
                     },
                     plugins: {
                         legend: {
                             display: true,
-                            position: window.innerWidth < 768 ? 'bottom' : 'top'
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 10
+                            }
                         },
                         tooltip: {
                             backgroundColor: 'rgba(0, 0, 0, 0.8)',
