@@ -52,12 +52,13 @@
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
         footer { 
-            background: #333; 
-            color: #fff; 
-            padding: 25px; 
+            background: #2c3e50; 
+            color: #ecf0f1; 
+            padding: 30px 20px; 
             text-align: center; 
-            margin-top: 40px; 
-            border-radius: 8px;
+            margin-top: 50px; 
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             display: block;
             clear: both;
             width: 100%;
@@ -68,43 +69,56 @@
             position: relative;
         }
         footer p { 
-            margin: 12px 0; 
-            line-height: 1.6; 
-            color: #fff;
+            margin: 15px 0; 
+            line-height: 1.7; 
+            color: #ecf0f1;
             display: block;
             font-size: 16px;
         }
         footer a { 
-            color: #87CEEB; 
+            color: #3498db; 
             text-decoration: none; 
-            transition: color 0.2s ease;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 2px 4px;
+            border-radius: 3px;
         }
         footer a:hover, footer a:active { 
-            color: #ADD8E6; 
-            text-decoration: underline; 
+            color: #ffffff; 
+            background-color: #3498db;
+            text-decoration: none;
         }
         footer strong { 
             color: #ffffff; 
-            font-weight: bold;
+            font-weight: 700;
+            font-size: 18px;
         }
         footer small { 
-            opacity: 0.85; 
-            color: #ccc;
-            font-size: 14px;
+            opacity: 0.8; 
+            color: #bdc3c7;
+            font-size: 13px;
+            display: block;
+            margin-top: 10px;
         }
         
         /* Mobile footer and chart */
         @media (max-width: 768px) {
             footer { 
-                padding: 15px !important; 
-                margin-top: 20px !important; 
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-                border-radius: 6px !important;
+                padding: 20px 15px;
+                margin-top: 30px;
+                margin-left: -5px;
+                margin-right: -5px;
+                border-radius: 8px;
             }
             footer p { 
-                font-size: 14px !important; 
-                margin: 8px 0 !important; 
+                font-size: 14px; 
+                margin: 10px 0; 
+            }
+            footer strong {
+                font-size: 16px;
+            }
+            footer small {
+                font-size: 12px;
             }
             footer small { font-size: 12px; }
             #chart { height: 250px !important; }
